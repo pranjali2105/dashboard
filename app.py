@@ -6,6 +6,7 @@ from dash import dcc, html
 app = dash.Dash(
     __name__,
     use_pages=True,
+    pages_folder="",
     external_stylesheets=[
         dbc.themes.CYBORG,
         # This loads the AgGrid dark theme
