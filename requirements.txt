@@ -4,7 +4,7 @@ dash-ag-grid # High-performance data grid for Tab 2
 pandas
 numpy
 plotly
-dash-cytoscape # For the Creator/Talent Network Visualization (Tab 6)
 networkx # Used by dash-cytoscape to build the graph model (Tab 6)
 country-converter # For Geographic Insights (ISO codes - Tab 4)
+
 pyarrow # Required by pandas for reading/writing .parquet files
