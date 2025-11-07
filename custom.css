@@ -1,0 +1,105 @@
+/* Save this in assets/custom.css */
+
+/* 1. Make the main app background PURE BLACK */
+body {
+    background-color: #000000 !important;
+}
+
+/* 2. Make the Navbar RED */
+.navbar.navbar-expand {
+    background-color: #E50914 !important; /* Netflix Red */
+}
+/* 3. Force all text inside the main app container to be white */
+/* This is MORE SPECIFIC and will beat the theme */
+.container-fluid .h1, .container-fluid .h2, .container-fluid .h3, 
+.container-fluid .h4, .container-fluid .h5, .container-fluid .h6,
+.container-fluid h1, .container-fluid h2, .container-fluid h3, 
+.container-fluid h4, .container-fluid h5, .container-fluid h6 {
+    color: white !important;
+}
+
+/* 4. Style the Tabs to be black/red */
+.nav-tabs .nav-link:not(.active) {
+    background-color: #222 !important;
+    color: #ccc !important;
+    border: none !important;
+}
+.nav-tabs .nav-link.active {
+    background-color: #E50914 !important; /* Netflix Red */
+    color: white !important;
+    border: none !important;
+}
+
+/* 5. Style the "info" alert to be dark */
+.alert-info {
+    background-color: #333 !important;
+    color: #eee !important;
+    border-color: #555 !important;
+}
+
+/* 6. Force the Portfolio Stats Card to be dark */
+.card {
+    background-color: #222 !important; 
+    border: 1px solid #444 !important;
+}
+/* 7. Fix the ACTIVE navbar tab color */
+.navbar .nav-pills .nav-link.active {
+    background-color: #B20710 !important; /* A darker, richer red */
+    color: white !important;      
+}
+/* 8. Fix the Dropdown for dark theme */
+.Select-control {
+    background-color: #222 !important;
+    border: 1px solid #444 !important;
+}
+.Select-control .Select-value-label,
+.Select-control .Select-placeholder,
+.Select-menu-outer .Select-option {
+    color: white !important;
+}
+.Select-menu-outer {
+    background-color: #333 !important;
+}
+/* 9. Make the similar movie links red */
+.similar-movie-link {
+    background-color: transparent !important;
+    border: none !important;
+    color: #E50914 !important; /* Netflix Red */
+    text-decoration: underline !important; /* Make it look like a link */
+    padding: 0 !important;
+}
+
+.similar-movie-link:hover {
+    color: #F08080 !important; /* A lighter red on hover */
+}
+/* 10. Fix the ACTIVE NAVBAR LINK (The big blue button) */
+.navbar .nav-pills .nav-item .nav-link.active {
+    background-color: #B20710 !important; /* Darker Red for contrast */
+    color: white !important;
+    border: none !important
+}
+/* --- Netflix Glow Title --- */
+.netflix-glow {
+    font-family: 'Bebas Neue', 'Montserrat', sans-serif;
+    font-size: 3rem;
+    color: #e50914; /* Netflix red */
+    text-shadow:
+        0 0 5px #e50914,
+        0 0 10px #e50914,
+        0 0 20px #ff0a16,
+        0 0 40px #ff0a16;
+    letter-spacing: 1px;
+    text-align: left;
+    margin-bottom: 20px;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Optional hover pulse */
+.netflix-glow:hover {
+    text-shadow:
+        0 0 10px #ff1a1a,
+        0 0 20px #ff1a1a,
+        0 0 40px #ff3333,
+        0 0 80px #ff3333;
+    transform: scale(1.02);
+}
