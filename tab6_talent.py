@@ -1,16 +1,15 @@
-# Save this in the /pages/ folder as tab6_talent.py
 import dash
 from dash import dcc, html, Input, Output
 import plotly.express as px
 import pandas as pd
 import dash_bootstrap_components as dbc
-import dash_cytoscape as cyto
+# --- MODIFICATION 1: 'dash_cytoscape' import removed ---
+# import dash_cytoscape as cyto 
 import dash_ag_grid as dag  # Import dash_ag_grid
 
 dash.register_page(__name__, name='Creator & Talent Hub', path='/talent-hub')
 
 # --- 1. Load Pre-processed Data ---
-# These files were created by prepare_talent_data.py
 try:
     df_portfolio = pd.read_parquet('talent_portfolio.parquet')
     df_edges = pd.read_parquet('talent_edges.parquet')
@@ -30,7 +29,6 @@ TALENT_LIST = sorted(df_portfolio['name'].unique())
 
 # --- 3. Define Page Layout ---
 layout = dbc.Container([
-    # FIX: Added 'className="text-light"'
     html.H1("🎬 Creator & Talent Hub", className="netflix-glow"),
     
     dbc.Tabs([
@@ -39,7 +37,6 @@ layout = dbc.Container([
             dbc.Row([
                 # -- Left Column: Controls & Portfolio --
                 dbc.Col([
-                    # FIX: Added 'className="text-light"'
                     html.H4("Talent Search", className="text-light"),
                     dcc.Dropdown(
                         id='talent-search-dropdown',
@@ -47,12 +44,9 @@ layout = dbc.Container([
                         placeholder="Search for an Actor or Director...",
                     ),
                     
-                    # FIX: Added 'className="mt-4 text-light"'
                     html.H4("Portfolio Analysis", className="mt-4 text-light"),
-                    # FIX: Added 'color="dark"'
                     dbc.Card(id='portfolio-stats-card', body=True, className="mb-3", color="dark"),
                     
-                    # FIX: Added 'className="ag-theme-alpine-dark"'
                     dag.AgGrid(
                         id='portfolio-table-grid',
                         className="ag-theme-alpine-dark", 
@@ -66,7 +60,6 @@ layout = dbc.Container([
                         dashGridOptions={"domLayout": "autoHeight"},
                     ),
                     
-                    # FIX: Added 'className="mt-4 text-light"'
                     html.H4("Portfolio Diversity", className="mt-4 text-light"),
                     dcc.Graph(id='diversity-pie-chart')
 
@@ -74,31 +67,26 @@ layout = dbc.Container([
                 
                 # -- Right Column: Network Vis --
                 dbc.Col([
-                    # FIX: Added 'className="text-light"'
                     html.H4("Collaboration Network", className="text-light"),
                     dbc.Alert("Shows this person and their direct collaborators.", color="info"),
-                    cyto.Cytoscape(
-                        id='collaboration-network-graph',
-                        layout={'name': 'cose'},
-                        style={'width': '100%', 'height': '700px'},
-                        stylesheet=[
-                            # Make node text white and larger
-                            {'selector': 'node', 'style': {'label': 'data(label)', 'font-size': '10px', 'color': 'white'}},
-                            {'selector': 'edge', 'style': {'line-color': '#ccc', 'width': 'data(weight)'}},
-                            # This uses the red from your previous code
-                            {'selector': '.center-node', 'style': {'background-color': "#d20f0f", 'color': 'white'}},
-                        ]
+                    
+                    # --- MODIFICATION 2: Cytoscape component removed and replaced ---
+                    # The 'cyto.Cytoscape' component was removed to avoid the error.
+                    dbc.Alert(
+                        "Network graph feature is temporarily disabled due to hosting resource limitations.",
+                        color="warning",
+                        className="mt-3"
                     )
+                    # --- End of MODIFICATION 2 ---
+
                 ], width=7)
             ])
         ]),
         # --- TAB 2: RISING STARS (Feature 5) ---
         dbc.Tab(label='Rising Stars', children=[
-            # FIX: Added 'className="mt-3 text-light"'
             html.H4("Rising Stars Identification", className="mt-3 text-light"),
             dbc.Alert("Talent with the highest positive growth in new titles over the past 5 years.", color="info"),
             
-            # FIX: Added 'className="ag-theme-alpine-dark"'
             dag.AgGrid(
                 id='rising-stars-grid',
                 className="ag-theme-alpine-dark",
@@ -120,15 +108,16 @@ layout = dbc.Container([
     Output('portfolio-stats-card', 'children'),
     Output('portfolio-table-grid', 'rowData'),
     Output('diversity-pie-chart', 'figure'),
-    Output('collaboration-network-graph', 'elements'),
+    # --- MODIFICATION 3: The Output for the network graph has been removed ---
+    # Output('collaboration-network-graph', 'elements'), 
     Input('talent-search-dropdown', 'value')
 )
 def update_talent_page(selected_name):
     if not selected_name:
-        # FIX: Added template="plotly_dark" to the default empty fig
         fig_pie = px.pie(title="Select a name")
         fig_pie.update_layout(template="plotly_dark", title_font_color="white")
-        return ["Select a name", [], fig_pie, []]
+        # --- MODIFICATION 4: Removed the 4th item from the default return list ---
+        return ["Select a name", [], fig_pie]
 
     # --- 1. Filter for Portfolio (Features 3 & 4) ---
     df_person_portfolio = df_portfolio[df_portfolio['name'] == selected_name]
@@ -157,32 +146,16 @@ def update_talent_page(selected_name):
         values='count',
         title="Portfolio by Country of Production"
     )
-    # FIX: Added template="plotly_dark" and 'font_color'
     fig_pie.update_layout(
         showlegend=False, 
         margin=dict(t=30, l=10, r=10, b=10),
         template="plotly_dark",
-        font_color="white" # Ensures all text in the plot is white
+        font_color="white"
     )
 
-    # --- 5. Build Network Graph (Feature 2) ---
-    df_person_edges = df_edges[
-        (df_edges['source'] == selected_name) | (df_edges['target'] == selected_name)
-    ]
-    collaborators = set(df_person_edges['source']).union(set(df_person_edges['target']))
-    collaborators.discard(selected_name)
-    
-    elements = []
-    elements.append({'data': {'id': selected_name, 'label': selected_name}, 'classes': 'center-node'})
-    for name in collaborators:
-        elements.append({'data': {'id': name, 'label': name}})
-    for _, row in df_person_edges.iterrows():
-        elements.append({
-            'data': {
-                'source': row['source'],
-                'target': row['target'],
-                'weight': row['weight'] / 5 
-            }
-        })
+    # --- MODIFICATION 5: The entire network graph logic block has been deleted ---
+    # (The block that started with "# --- 5. Build Network Graph (Feature 2) ---")
+    # --- End of MODIFICATION 5 ---
 
-    return stats_card, portfolio_table_data, fig_pie, elements
+    # --- MODIFICATION 6: Removed 'elements' from the final return statement ---
+    return stats_card, portfolio_table_data, fig_pie
